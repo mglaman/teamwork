@@ -1,0 +1,34 @@
+{
+    "name": "steyep/teamwork",
+    "type": "library",
+    "description": "Tool for interfacing with Teamwork.",
+    "keywords": [
+        "teamwork",
+        "estimate"
+    ],
+    "authors": [
+        {
+            "name": "Stephen Pennell",
+            "email": "ste@steyep.com",
+            "homepage": "https://steyep.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "symfony/console": "^5.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Teamwork\\": "src"
+        },
+        "classmap": ["src"]
+    },
+    "bin": ["bin/teamwork"],
+    "require-dev": {
+        "escapestudios/symfony2-coding-standard": "^3.11"
+    },
+    "scripts": {
+        "phpcs": "./vendor/bin/phpcs --standard=./vendor/escapestudios/symfony2-coding-standard/Symfony src",
+        "phpcbf": "./vendor/bin/phpcbf --standard=./vendor/escapestudios/symfony2-coding-standard/Symfony src"
+    }
+}
