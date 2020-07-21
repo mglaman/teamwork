@@ -64,10 +64,13 @@ class CreateEstimate extends Command
         /** @var \App\Components\Task\TaskCollection $developmentTasks */
         $developmentTasks = $estimate->getTask('dev');
         $calculateQaTime = false;
+        // Set the default development task description to "Development time".
+        $defaultDevTask = 'Development time';
 
         // Allow development tasks to be created dynamically.
         while (true) {
-            $question = new Question('Enter a description of the dev task (leave blank to continue): ');
+            $developmentTaskQuestion = 'Enter a description of the dev task '.($defaultDevTask ? "[{$defaultDevTask}]" : '(Leave blank to continue)').': ';
+            $question = new Question($developmentTaskQuestion, $defaultDevTask);
             $taskDescription = $helper->ask($input, $output, $question);
             /** @var \App\Components\Task\Task $task */
             if (!($task = $developmentTasks->createTask($taskDescription, 1.00))) {
@@ -75,6 +78,8 @@ class CreateEstimate extends Command
             }
             $calculateQaTime = true;
             $promptForEstimate($task);
+            // After the first dev task has been created, nullify the default.
+            $defaultDevTask = null;
         }
 
         // If development tasks were added to the estimate, we can revise the
@@ -98,7 +103,9 @@ class CreateEstimate extends Command
         $output->writeln('');
         $output->writeln('Estimate breakdown:');
         foreach ($estimate->getTasks() as $task) {
-            $output->writeln(sprintf('<info>  %s H: %s</info>', $task->totalEstimate(), $task->id()));
+            if ($total = $task->totalEstimate()) {
+                $output->writeln(sprintf('<info>  %s H: %s</info>', $total, $task->id()));
+            }
         }
         $output->writeln(sprintf('%s Hours Total', $estimate->totalEstimate()));
 
