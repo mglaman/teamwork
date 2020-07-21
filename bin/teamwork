@@ -1,7 +1,26 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// Closure for locating the autoloader.
+call_user_func(function () {
+  if (!class_exists('Teamwork\App\Commands\CreateEstimate')) {
+    $autoloaders = [
+      'vendor/autoload.php',
+      '../../../vendor/autoload.php',
+    ];
+    $directory = dirname(__DIR__);
+    foreach ($autoloaders as $autoloader_path) {
+      $autoloader = $directory . '/' . $autoloader_path;
+      if (file_exists($autoloader)) {
+        require_once $autoloader;
+        return TRUE;
+      }
+    }
+    fwrite(STDERR, 'Teamwork dependencies not found, be sure to run `composer install`.' . PHP_EOL);
+    fwrite(STDERR, 'See https://getcomposer.org to get Composer.' . PHP_EOL);
+    exit(1);
+  }
+});
 
 use Symfony\Component\Console\Application;
 use Teamwork\App\Commands\CreateEstimate;
