@@ -85,7 +85,7 @@ class CreateEstimate extends Command
         // If development tasks were added to the estimate, we can revise the
         // QA estimate to be 1/3 the development time.
         if ($calculateQaTime && ($qa = $estimate->getTask('qa'))) {
-            $devEstimate = $developmentTasks->totalEstimate();
+            $devEstimate = (float) $developmentTasks->totalEstimate();
             $qa->setEstimate($devEstimate / 3);
         }
 
@@ -100,14 +100,15 @@ class CreateEstimate extends Command
             }
         }
 
-        $output->writeln('');
         $output->writeln('Estimate breakdown:');
+        $output->writeln('```');
         foreach ($estimate->getTasks() as $task) {
-            if ($total = $task->totalEstimate()) {
-                $output->writeln(sprintf('<info>  %s H: %s</info>', $total, $task->id()));
+            if ('0.00' !== ($total = $task->totalEstimate())) {
+                $output->writeln(sprintf('%s H: %s', $total, $task->id()));
             }
         }
-        $output->writeln(sprintf('%s Hours Total', $estimate->totalEstimate()));
+        $output->writeln('```');
+        $output->write(sprintf('**%s Hours Total**', $estimate->totalEstimate()));
 
         return Command::SUCCESS;
     }

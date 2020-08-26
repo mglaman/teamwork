@@ -131,6 +131,6 @@ class TaskCollection implements TaskInterface
             $total += (float) $task->totalEstimate($round);
         }
 
-        return number_format($total, 2);
+        return $total ? number_format($total, 2) : '';
     }
 }
