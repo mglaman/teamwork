@@ -44,7 +44,8 @@ class CreateEstimate extends Command
     {
         $this->setName('create-estimate')
             ->setDescription('Create an estimate')
-            ->addOption('use-defaults', null, InputOption::VALUE_OPTIONAL, 'Prompt for default tasks', false);
+            ->addOption('use-defaults', null, InputOption::VALUE_OPTIONAL, 'Prompt for default tasks', false)
+            ->addOption('markdown', null, InputOption::VALUE_OPTIONAL, 'Output estimates with markdown', false);
     }
 
     /**
@@ -100,15 +101,17 @@ class CreateEstimate extends Command
             }
         }
 
+        $useMarkdown = $input->getOption('markdown') !== false;
         $output->writeln('Estimate breakdown:');
-        $output->writeln('```');
+        $output->writeln($useMarkdown ? '```' : '');
         foreach ($estimate->getTasks() as $task) {
             if ('0.00' !== ($total = $task->totalEstimate())) {
-                $output->writeln(sprintf('%s H: %s', $total, $task->id()));
+                $output->writeln(sprintf('<info>%s H: %s</info>', $total, $task->id()));
             }
         }
-        $output->writeln('```');
-        $output->write(sprintf('**%s Hours Total**', $estimate->totalEstimate()));
+        $output->writeln($useMarkdown ? '```' : '');
+        $bold = $useMarkdown ? '**' : '';
+        $output->write(sprintf('%s%s Hours Total%s', $bold, $estimate->totalEstimate(), $bold));
 
         return Command::SUCCESS;
     }
