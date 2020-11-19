@@ -27,4 +27,5 @@ use Teamwork\App\Commands\CreateEstimate;
 
 $app = new Application();
 $app->add(new CreateEstimate());
+$app->setDefaultCommand('create-estimate', true);
 $app->run();
